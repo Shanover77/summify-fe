@@ -37,8 +37,8 @@
             <div class="audio-ui card card-body mt-4" v-if="audioUrl">
                 <div v-if="audioUrl" class="p-2">
                     <h4><i class="fas fa-file-audio"></i> Here's the audio file:</h4>
-                    <audio controls class="mt-3">
-                        <source src="audioUrl" type="audio/mpeg">
+                    <audio controls class="mt-3" autoplay>
+                        <source :src="audioUrl" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio> 
                 </div>
@@ -64,7 +64,7 @@
                         <h4>{{ meta.publish_date.split('00:00:00')[0] }}</h4>
                     </div>
                 </div>
-                <p class="lead mt-4">It might take about <span class="text-bold">{{ (meta.length * 0.6) }}</span> seconds to summarize this video, that's saving 40% of your time.</p>
+                <p class="lead mt-4">It might take about <span class="text-bold">{{ Math.round(meta.length * 0.6) }}</span> seconds to summarize this video, that's saving 40% of your time.</p>
             </div>
 
           
