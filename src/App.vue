@@ -2,9 +2,11 @@
   <div style="align:center">
       <!-- <h1>Summify</h1> -->
 
-      <div class="container p-3 text-center">
-        <img src="@/assets/logo.png" class="logo mt-5"/>
-        <h3>Summarize videos, time is precious</h3>
+      <div class="container p-3">
+        <div class="text-center">
+          <img src="@/assets/logo.png" class="logo mt-5"/>
+          <h3>Summarize videos, time is precious</h3>
+        </div>
         
         <div class="p-4">
           <URLFetcher/>
@@ -22,9 +24,15 @@ export default {
 </script>
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather&family=Roboto+Mono:ital,wght@0,300;0,400;0,700;1,300&display=swap');
 @import url("assets/mdb.min.css");
 @import url("assets/custom.css");
+
+body{
+  /* font-family: 'Merriweather', serif; */
+font-family: 'Roboto Mono', monospace;
+}
   
   .logo{
     max-height: 250px;
