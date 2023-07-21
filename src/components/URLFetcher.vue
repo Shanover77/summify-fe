@@ -32,6 +32,19 @@
                 <ul class="mt-3">
                     <li v-for="(item, index) in textInPoints" :key="index">{{ item }}</li>
                 </ul>
+
+                <div class="p-3 mb-3">
+                    <div v-if="wordCloudFilePath" class="p-2">
+                        <h4><i class="fas fa-file-audio"></i> Word Cloud:</h4>
+                        <img :src="wordCloudFilePath" style="max-height: 500px;"/>
+                    </div>
+                </div>
+
+                <div v-if="textFilePath" class="p-2">
+                    <h4><i class="fas fa-file-audio"></i> Text file:</h4>
+                    <a :href="textFilePath" target="_blank" download="true">Download text file</a>
+                </div>
+                
             </div>
 
             <div class="audio-ui card card-body mt-4" v-if="audioUrl">
@@ -91,8 +104,10 @@ export default {
             audioUrl:null,
             rawAudioUrl:null,
             summaryText:null,
+            textFilePath:null,
+            wordCloudFilePath:null,
             url:'',
-            endpointUrlBase:'http://127.0.0.1:5000/youtube',
+            endpointUrlBase:'http://127.0.0.1:5000/',
             urlBase:'http://127.0.0.1:5000'
         }
     },
@@ -129,6 +144,18 @@ export default {
             const encodedPath = filePath.replace(/\\/g, "/");
             return encodeURI(encodedPath);
         },
+        processFilePath(path, type){   
+            console.debug('Got path:' + path + '> Type:' + type) 
+            path = this.encodeFilePathForAudioURL(path)                        
+            const startIndex = path.indexOf("/static");
+
+            // Extract the desired part of the URL
+            const convertedPath = path.substring(startIndex);
+
+            const fin = this.urlBase + convertedPath
+            console.debug('final:' + fin) 
+            return fin
+        },
         fetchMetaData(){     
             this.loadingAudio = true
             this.loadingSumma = true       
@@ -139,7 +166,7 @@ export default {
             this.rawAudioUrl = null
     
             // Make a POST request to the Flask API for video metadata
-            axios.post(this.endpointUrlBase + '/video_meta', { url: this.url })
+            axios.get(this.endpointUrlBase + 'video/metadata?url='+this.url)
             .then(response => {
                 const dat = response.data.body
 
@@ -155,11 +182,11 @@ export default {
             this.loadingAudio = true;
     
             // Make a POST request to the Flask API for video metadata
-            axios.post(this.endpointUrlBase + '/audio_file', { url: this.url })
+            axios.post(this.endpointUrlBase + 'video/download', { url: this.url })
             .then(response => {
                 const dat = response.data.body
 
-                this.rawAudioUrl = this.encodeFilePathForAudioURL(dat.audio_path)
+                this.rawAudioUrl = this.encodeFilePathForAudioURL(dat.file_path)
 
                 const rurl = this.rawAudioUrl
                 
@@ -183,12 +210,14 @@ export default {
             console.debug('Sending audioPath:' + audioPath)
 
             // Make a POST request to the Flask API for video metadata
-            axios.post(this.endpointUrlBase + '/summarize', { url: audioPath })
+            axios.post(this.endpointUrlBase + 'audio/convert', { file_path: audioPath })
             .then(response => {
                 const dat = response.data.body
 
                 this.summaryText = dat.text
-                console.debug('Text response: ' + JSON.stringify(response.data))
+                this.textFilePath = this.processFilePath(dat.text_file_path, 'text_files')
+                this.wordCloudFilePath = this.processFilePath(dat.word_cloud_path, 'word_clouds')
+                console.debug('Text response: ' + JSON.stringify(dat))
                 this.loadingSumma = false;
             });
         }
