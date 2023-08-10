@@ -1,4 +1,11 @@
 
+  .txb{
+    border-radius: 6px;
+    height: 60px;
+    font-weight: bold;
+    max-width: 600px;
+    justify-content: center;
+  }
     .text-dim{
         color:#989898;
     }
